@@ -1,0 +1,108 @@
+########################################
+# 1. Python 기본
+########################################
+__pycache__/
+*.py[cod]
+*$py.class
+*.so                     # Cython, 파이썬 확장 모듈
+.Python                  # virtualenv 인터프리터 기록
+
+########################################
+# 2. 가상환경 & 패키지 매니저
+########################################
+# venv / virtualenv / conda
+.env/
+.venv/
+venv*/
+env*/
+ENV*/
+conda*/                  # conda create --prefix 등
+# Pipenv / Poetry
+Pipfile.lock
+poetry.lock
+# pyenv
+.python-version
+
+########################################
+# 3. 빌드·배포 산출물
+########################################
+build/
+dist/
+downloads/
+sdist/
+*.egg-info/
+.eggs/
+*.whl
+*.manifest
+*.spec                   # PyInstaller
+
+########################################
+# 4. 데이터·모델·실험 결과
+########################################
+# 대용량 데이터 & 체크포인트
+data*/
+datasets*/
+*.csv
+*.tsv
+*.json
+*.parquet
+*.h5
+*.hdf5
+*.np[yz]                 # .npy / .npz
+*.ckpt
+*.pt
+*.pth
+runs/                    # PyTorch-Lightning, TensorBoard
+checkpoints*/
+models*/
+weights*/
+# DVC 사용 시 메타만 버전 관리
+.dvc/
+*.dvc
+
+########################################
+# 5. Jupyter & 연구 노트
+########################################
+*.ipynb
+.ipynb_checkpoints/
+
+########################################
+# 6. 로그·캐시
+########################################
+*.log
+logs*/
+.cache/
+**/__pytorch_profiler*/  # torch-profiler
+# huggingface cache
+huggingface/
+~/.cache/huggingface/
+
+########################################
+# 7. 테스트 & 정적분석 산출물
+########################################
+coverage.xml
+htmlcov/
+.coverage*
+.mypy_cache/
+.pyre/
+.pytest_cache/
+
+########################################
+# 8. IDE / 편집기 설정
+########################################
+.vscode/
+.idea/
+*.sublime-workspace
+*.code-workspace
+# OS
+.DS_Store
+Thumbs.db
+
+########################################
+# 9. 컨테이너 & 배포 관련
+########################################
+docker-compose.override.yml
+*.pid
+*.pid.lock
+*.pem                    # 키 파일(예: AWS)
+.env.production          # 운영용 환경변수 파일
