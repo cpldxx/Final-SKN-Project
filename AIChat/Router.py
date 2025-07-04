@@ -3,7 +3,8 @@ from __future__ import annotations
 import json
 import os
 from typing import List, Dict, Any
-
+from tool.newsAPI import GNewsClient  # GNewsClient를 사용하려면 해당 모듈이 필요합니다.
+from tool.financial_statements import IncomeStatementClient  # IncomeStatementClient를 사용하려면 해당 모듈이 필요합니다.
 from openai import OpenAI
 from pydantic import BaseModel, Field
 
@@ -89,7 +90,7 @@ TOOL_SPECS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "query": {"type": "string", "description": "검색할 키워드"},
+                    "query": {"type": "string", "description": "검색할 키워드 (영어)"},
                     "k": {"type": "integer", "description": "가져올 문서 수", "default": 5},
                 },
                 "required": ["query"],
@@ -99,35 +100,39 @@ TOOL_SPECS = [
     {
         "type": "function",
         "function": {
-            "name": "finance_api",
+            "name": "financial_statements",
             "description": "주식/암호화폐 실시간 가격, 재무 지표를 조회합니다.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "ticker": {"type": "string", "description": "종목 기호 (e.g., TSLA, 005930.KS)"},
+                    "limit": {"type": "integer","description": "조회할 재무제표 개수 (기본값: 3)","default": 3,
+                    },
                 },
                 "required": ["ticker"],
             },
         },
-    },
+    }
 ]
 # ---------------------------------------------------------------------------
 # 툴 함수 정의
 # ---------------------------------------------------------------------------
 def web_search(query: str, k: int = 5):
-    print(f"🔍 Web 검색: '{query}' (Top {k}건)")
-    return [{"title": f"{query} 뉴스 {i+1}"} for i in range(k)]
+    news = GNewsClient()
+    answer = news.get(keyword=query, max_results=k)
+    return answer
 
-def finance_api(ticker: str):
-    print(f"📈 금융 데이터 요청: {ticker}")
-    return {"ticker": ticker, "price": "999.99", "status": "mock"}
+def financial_statements(ticker: str, limit: int = 1):
+    client = IncomeStatementClient()
+    answer = client.get(ticker, limit)
+    return "ticker" + ticker + "financial_data" + answer
 
 # ---------------------------------------------------------------------------
 # 툴 이름과 실제 함수 매핑
 #
 TOOL_FUNCTIONS = {
     "web_search": web_search,
-    "finance_api": finance_api,
+    "financial_statements": financial_statements,
 }
 # ---------------------------------------------------------------------------
 # CLI 테스트 실행
@@ -148,13 +153,9 @@ if __name__ == "__main__":
             if not calls:
                 print("\n[⚠️ Tool Calls 없음]")
             else:
-                print("\n[Tool Calls]")
                 for call in calls:
-                    print(json.dumps(call.model_dump(), indent=2, ensure_ascii=False))
-                    
                     func = TOOL_FUNCTIONS.get(call.name)
                     if func:
-                        print("\n[✅ 실행 결과]")
                         result = func(**call.arguments)
                         print(result)
                         # print(json.dumps(result, indent=2, ensure_ascii=False))
