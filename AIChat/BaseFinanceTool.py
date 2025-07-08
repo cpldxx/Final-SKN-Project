@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import os
 from dotenv import load_dotenv
-from typing import Any, Dict
+from typing import Any
 
 class BaseFinanceTool(ABC):
     """
@@ -17,4 +17,4 @@ class BaseFinanceTool(ABC):
         """
         Abstract method to fetch or compute data. Should be implemented by all subclasses.
         """
-        pass
+        pass 
